@@ -16,8 +16,8 @@ public class SimpleProductDatabase implements ProductDatabase {
         this.databasePath = databasePath;
     }
 
-    public int getScalarNumber(String query, int neutral) {
-        int result = neutral;
+    public int getScalarNumber(String query, int empty) {
+        int result = empty;
         try (Connection c = DriverManager.getConnection(databasePath)) {
             Statement stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery(query);

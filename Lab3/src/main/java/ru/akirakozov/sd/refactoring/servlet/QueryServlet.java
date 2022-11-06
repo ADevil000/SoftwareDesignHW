@@ -19,7 +19,7 @@ public class QueryServlet extends HttpServlet {
         MAX, MIN, SUM, COUNT, UNKNOWN
     }
     public final ProductDatabase database;
-    public static final int NEUTRAL = Integer.MIN_VALUE;
+    public static final int EMPTY = Integer.MIN_VALUE;
 
     public QueryServlet() {
         this.database  = new SimpleProductDatabase("jdbc:sqlite:test.db");
@@ -100,11 +100,11 @@ public class QueryServlet extends HttpServlet {
     }
 
     private void doScalarQuery(PrintWriter writer, String query, String info) {
-        int result = database.getScalarNumber(query, NEUTRAL);
+        int result = database.getScalarNumber(query, EMPTY);
 
         writer.println("<html><body>");
         writer.println(info);
-        if (result != NEUTRAL) {
+        if (result != EMPTY) {
             writer.println(result);
         }
         writer.println("</body></html>");

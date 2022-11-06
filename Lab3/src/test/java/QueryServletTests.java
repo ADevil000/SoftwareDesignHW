@@ -111,7 +111,7 @@ public class QueryServletTests {
     public void testSumResult() throws IOException {
         int price = 600;
         String query = "SELECT SUM(price) FROM PRODUCT";
-        when(database.getScalarNumber(query, QueryServlet.NEUTRAL)).thenReturn(600);
+        when(database.getScalarNumber(query, QueryServlet.EMPTY)).thenReturn(600);
 
         when(request.getParameter("command")).thenReturn("sum");
 
@@ -132,7 +132,7 @@ public class QueryServletTests {
     @Test
     public void testEmptySumResult() throws IOException {
         String query = "SELECT SUM(price) FROM PRODUCT";
-        when(database.getScalarNumber(query, QueryServlet.NEUTRAL)).thenReturn(QueryServlet.NEUTRAL);
+        when(database.getScalarNumber(query, QueryServlet.EMPTY)).thenReturn(QueryServlet.EMPTY);
 
         when(request.getParameter("command")).thenReturn("sum");
 
@@ -152,7 +152,7 @@ public class QueryServletTests {
     @Test
     public void testEmptyCountResult() throws IOException {
         String query = "SELECT COUNT(*) FROM PRODUCT";
-        when(database.getScalarNumber(query, QueryServlet.NEUTRAL)).thenReturn(QueryServlet.NEUTRAL);
+        when(database.getScalarNumber(query, QueryServlet.EMPTY)).thenReturn(QueryServlet.EMPTY);
 
         when(request.getParameter("command")).thenReturn("count");
 
@@ -173,7 +173,7 @@ public class QueryServletTests {
     public void testCountResult() throws IOException {
         int count = 600;
         String query = "SELECT COUNT(*) FROM PRODUCT";
-        when(database.getScalarNumber(query, QueryServlet.NEUTRAL)).thenReturn(count);
+        when(database.getScalarNumber(query, QueryServlet.EMPTY)).thenReturn(count);
 
         when(request.getParameter("command")).thenReturn("count");
 

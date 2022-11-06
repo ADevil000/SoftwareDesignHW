@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ProductDatabase {
-    int getScalarNumber(String query, int neutral);
+    int getScalarNumber(String query, int empty);
 
     List<Map<String, String>> getNamesAndPrices(String query);
 
