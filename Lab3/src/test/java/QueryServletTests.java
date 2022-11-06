@@ -151,6 +151,52 @@ public class QueryServletTests {
     }
 
     @Test
+    public void testEmptySumResult() throws SQLException, IOException {
+        when(resultSet.next()).thenReturn(false);
+
+        when(statement.executeQuery("SELECT SUM(price) FROM PRODUCT")).thenReturn(resultSet);
+        when(request.getParameter("command")).thenReturn("sum");
+
+        final QueryServlet testObj = new QueryServlet();
+        testObj.doGet(request, response);
+
+        String[] expected = new String[]{
+                "<html><body>",
+                "Summary price: ",
+                "</body></html>"
+        };
+        assertArrayEquals(expected, result.toArray());
+        verify(response).setContentType("text/html");
+        verify(response).setStatus(HttpServletResponse.SC_OK);
+        verify(resultSet).close();
+        verify(statement).close();
+        verify(connection).close();
+    }
+
+    @Test
+    public void testEmptyCountResult() throws SQLException, IOException {
+        when(resultSet.next()).thenReturn(false);
+
+        when(statement.executeQuery("SELECT COUNT(*) FROM PRODUCT")).thenReturn(resultSet);
+        when(request.getParameter("command")).thenReturn("count");
+
+        final QueryServlet testObj = new QueryServlet();
+        testObj.doGet(request, response);
+
+        String[] expected = new String[]{
+                "<html><body>",
+                "Number of products: ",
+                "</body></html>"
+        };
+        assertArrayEquals(expected, result.toArray());
+        verify(response).setContentType("text/html");
+        verify(response).setStatus(HttpServletResponse.SC_OK);
+        verify(resultSet).close();
+        verify(statement).close();
+        verify(connection).close();
+    }
+
+    @Test
     public void testCountResult() throws SQLException, IOException {
         int count = 600;
         when(resultSet.next()).thenReturn(true).thenReturn(false);
