@@ -18,7 +18,7 @@ public class GetProductsServlet extends HttpServlet {
     public final ProductDatabase database;
 
     public GetProductsServlet() {
-        this.database  = new SimpleProductDatabase("jdbc:sqlite:test.db");
+        this.database = new SimpleProductDatabase("jdbc:sqlite:test.db");
     }
 
     public GetProductsServlet(ProductDatabase database) {
@@ -32,7 +32,7 @@ public class GetProductsServlet extends HttpServlet {
         try (HTMLWriter writer = new HTMLWriter(response.getWriter())) {
             for (Map<String, String> pairs : result) {
                 String name = pairs.get("name");
-                String price  = pairs.get("price");
+                String price = pairs.get("price");
                 writer.addParagraph(name + "\t" + price);
             }
         }

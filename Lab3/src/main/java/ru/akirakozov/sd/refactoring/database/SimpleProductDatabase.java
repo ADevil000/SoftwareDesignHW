@@ -44,7 +44,7 @@ public class SimpleProductDatabase implements ProductDatabase {
                 HashMap<String, String> record = new HashMap<>();
                 String name = rs.getString("name");
                 record.put("name", name);
-                int price  = rs.getInt("price");
+                int price = rs.getInt("price");
                 record.put("price", String.valueOf(price));
                 result.add(record);
             }

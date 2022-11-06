@@ -15,7 +15,7 @@ public class AddProductServlet extends HttpServlet {
     public final ProductDatabase database;
 
     public AddProductServlet() {
-        this.database  = new SimpleProductDatabase("jdbc:sqlite:test.db");
+        this.database = new SimpleProductDatabase("jdbc:sqlite:test.db");
     }
 
     public AddProductServlet(ProductDatabase database) {

@@ -101,7 +101,7 @@ public class SimpleProductDatabaseTests {
         int price = 600;
         when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
         when(resultSet.getString("name")).thenReturn(name).thenReturn(name + name);
-        when(resultSet.getInt("price")).thenReturn(price). thenReturn(price + price);
+        when(resultSet.getInt("price")).thenReturn(price).thenReturn(price + price);
 
         when(statement.executeQuery(query)).thenReturn(resultSet);
 

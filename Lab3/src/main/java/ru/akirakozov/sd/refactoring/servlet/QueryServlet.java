@@ -19,16 +19,18 @@ public class QueryServlet extends HttpServlet {
     private enum Action {
         MAX, MIN, SUM, COUNT, UNKNOWN
     }
+
     public final ProductDatabase database;
     public static final int EMPTY = Integer.MIN_VALUE;
 
     public QueryServlet() {
-        this.database  = new SimpleProductDatabase("jdbc:sqlite:test.db");
+        this.database = new SimpleProductDatabase("jdbc:sqlite:test.db");
     }
 
     public QueryServlet(ProductDatabase database) {
         this.database = database;
     }
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String command = request.getParameter("command");

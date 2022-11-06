@@ -41,7 +41,7 @@ public class HTMLWriterTests {
     public void testAddParagraph() {
         String text = "iphone \t 600";
 
-        try(final HTMLWriter testObj = new HTMLWriter(writer)) {
+        try (final HTMLWriter testObj = new HTMLWriter(writer)) {
             testObj.addParagraph(text);
         }
 
@@ -57,7 +57,7 @@ public class HTMLWriterTests {
     public void testAddHeader() {
         String text = "Product with min price: ";
 
-        try(final HTMLWriter testObj = new HTMLWriter(writer)) {
+        try (final HTMLWriter testObj = new HTMLWriter(writer)) {
             testObj.addHeader1(text);
         }
 
@@ -73,7 +73,7 @@ public class HTMLWriterTests {
     public void testAddLine() {
         String text = "Some text.";
 
-        try(final HTMLWriter testObj = new HTMLWriter(writer)) {
+        try (final HTMLWriter testObj = new HTMLWriter(writer)) {
             testObj.addLine(text);
         }
 
