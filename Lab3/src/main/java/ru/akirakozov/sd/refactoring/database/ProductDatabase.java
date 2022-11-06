@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface ProductDatabase {
-    public int getScalarNumber(String query, int neutral);
+    int getScalarNumber(String query, int neutral);
 
-    public List<Map<String, String>> getNamesAndPrices(String query);
+    List<Map<String, String>> getNamesAndPrices(String query);
 
-    public void addValue(String sql);
+    void addValue(String sql);
 }
