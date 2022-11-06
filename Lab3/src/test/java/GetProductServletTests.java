@@ -1,8 +1,6 @@
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
+import ru.akirakozov.sd.refactoring.database.ProductDatabase;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 
 
@@ -10,43 +8,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GetProductServletTests {
-
-    private static MockedStatic<DriverManager> mockedStaticDriverManager;
-    private ResultSet resultSet;
-    private Statement statement;
-    private Connection connection;
+    private ProductDatabase database;
     private PrintWriter writer;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private ArrayList<String> result;
-
-    @BeforeAll
-    public static void init() {
-        mockedStaticDriverManager = mockStatic(DriverManager.class);
-    }
-
-    @AfterAll
-    public static void close() {
-        mockedStaticDriverManager.close();
-    }
+    private String query;
+    List<Map<String, String>> mockDatabaseResults;
 
     @BeforeEach
-    public void setUp() throws SQLException, IOException {
-        resultSet = mock(ResultSet.class);
-
-        statement = mock(Statement.class);
-        when(statement.executeQuery("SELECT * FROM PRODUCT")).thenReturn(resultSet);
-
-        connection = mock(Connection.class);
-        when(connection.createStatement()).thenReturn(statement);
-        when(DriverManager.getConnection("jdbc:sqlite:test.db")).thenReturn(connection);
+    public void setUp() throws IOException {
+        database = mock(ProductDatabase.class);
+        query = "SELECT * FROM PRODUCT";
+        mockDatabaseResults = new ArrayList<>();
+        when(database.getNamesAndPrices(query)).thenReturn(mockDatabaseResults);
 
         writer = mock(PrintWriter.class);
 
@@ -64,10 +48,8 @@ public class GetProductServletTests {
     }
 
     @Test
-    public void testZeroResults() throws SQLException, IOException {
-        when(resultSet.next()).thenReturn(false);
-
-        final GetProductsServlet testObj = new GetProductsServlet();
+    public void testZeroResults() throws IOException {
+        final GetProductsServlet testObj = new GetProductsServlet(database);
         testObj.doGet(request, response);
 
         String[] expected = new String[]{
@@ -77,20 +59,19 @@ public class GetProductServletTests {
         assertArrayEquals(expected, result.toArray());
         verify(response).setContentType("text/html");
         verify(response).setStatus(HttpServletResponse.SC_OK);
-        verify(resultSet).close();
-        verify(statement).close();
-        verify(connection).close();
     }
 
     @Test
-    public void testOneResult() throws SQLException, IOException {
+    public void testOneResult() throws IOException {
         String name = "iphone";
         int price = 600;
-        when(resultSet.next()).thenReturn(true).thenReturn(false);
-        when(resultSet.getString("name")).thenReturn(name);
-        when(resultSet.getInt("price")).thenReturn(price);
 
-        final GetProductsServlet testObj = new GetProductsServlet();
+        HashMap<String, String> pair = new HashMap<>();
+        pair.put("name", name);
+        pair.put("price", String.valueOf(price));
+        mockDatabaseResults.add(pair);
+
+        final GetProductsServlet testObj = new GetProductsServlet(database);
         testObj.doGet(request, response);
 
         String[] expected = new String[]{
@@ -101,20 +82,24 @@ public class GetProductServletTests {
         assertArrayEquals(expected, result.toArray());
         verify(response).setContentType("text/html");
         verify(response).setStatus(HttpServletResponse.SC_OK);
-        verify(resultSet).close();
-        verify(statement).close();
-        verify(connection).close();
     }
 
     @Test
-    public void testTwoResult() throws SQLException, IOException {
+    public void testTwoResult() throws IOException {
         String name = "iphone";
         int price = 600;
-        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
-        when(resultSet.getString("name")).thenReturn(name).thenReturn(name + name);
-        when(resultSet.getInt("price")).thenReturn(price).thenReturn(price + price);
 
-        final GetProductsServlet testObj = new GetProductsServlet();
+        HashMap<String, String> pair = new HashMap<>();
+        pair.put("name", name);
+        pair.put("price", String.valueOf(price));
+        mockDatabaseResults.add(pair);
+
+        HashMap<String, String> pair2 = new HashMap<>();
+        pair2.put("name", name + name);
+        pair2.put("price", String.valueOf(price + price));
+        mockDatabaseResults.add(pair2);
+
+        final GetProductsServlet testObj = new GetProductsServlet(database);
         testObj.doGet(request, response);
 
         String[] expected = new String[]{
@@ -126,8 +111,5 @@ public class GetProductServletTests {
         assertArrayEquals(expected, result.toArray());
         verify(response).setContentType("text/html");
         verify(response).setStatus(HttpServletResponse.SC_OK);
-        verify(resultSet).close();
-        verify(statement).close();
-        verify(connection).close();
     }
 }
