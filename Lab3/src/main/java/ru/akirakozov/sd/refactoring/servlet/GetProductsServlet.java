@@ -2,6 +2,7 @@ package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.database.ProductDatabase;
 import ru.akirakozov.sd.refactoring.database.SimpleProductDatabase;
+import ru.akirakozov.sd.refactoring.html.HTMLWriter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,14 +29,13 @@ public class GetProductsServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String query = "SELECT * FROM PRODUCT";
         List<Map<String, String>> result = database.getNamesAndPrices(query);
-
-        response.getWriter().println("<html><body>");
-        for (Map<String, String> pairs : result) {
-            String name = pairs.get("name");
-            String price  = pairs.get("price");
-            response.getWriter().println(name + "\t" + price + "</br>");
+        try (HTMLWriter writer = new HTMLWriter(response.getWriter())) {
+            for (Map<String, String> pairs : result) {
+                String name = pairs.get("name");
+                String price  = pairs.get("price");
+                writer.addParagraph(name + "\t" + price);
+            }
         }
-        response.getWriter().println("</body></html>");
 
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);

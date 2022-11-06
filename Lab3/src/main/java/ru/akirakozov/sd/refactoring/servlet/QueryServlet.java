@@ -2,6 +2,7 @@ package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.database.ProductDatabase;
 import ru.akirakozov.sd.refactoring.database.SimpleProductDatabase;
+import ru.akirakozov.sd.refactoring.html.HTMLWriter;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,23 +39,23 @@ public class QueryServlet extends HttpServlet {
         } catch (Exception ignored) {
             action = Action.UNKNOWN;
         }
-        PrintWriter writer = response.getWriter();
+        PrintWriter printWriter = response.getWriter();
 
         switch (action) {
             case MAX:
-                max(writer);
+                max(printWriter);
                 break;
             case MIN:
-                min(writer);
+                min(printWriter);
                 break;
             case SUM:
-                sum(writer);
+                sum(printWriter);
                 break;
             case COUNT:
-                count(writer);
+                count(printWriter);
                 break;
             case UNKNOWN:
-                writer.println("Unknown command: " + command);
+                printWriter.println("Unknown command: " + command);
                 break;
         }
 
@@ -64,27 +65,26 @@ public class QueryServlet extends HttpServlet {
 
     private void max(PrintWriter writer) {
         String query = "SELECT * FROM PRODUCT ORDER BY PRICE DESC LIMIT 1";
-        String info = "<h1>Product with max price: </h1>";
+        String info = "Product with max price: ";
         doSortQuery(writer, query, info);
     }
 
     private void min(PrintWriter writer) {
         String query = "SELECT * FROM PRODUCT ORDER BY PRICE LIMIT 1";
-        String info = "<h1>Product with min price: </h1>";
+        String info = "Product with min price: ";
         doSortQuery(writer, query, info);
     }
 
-    private void doSortQuery(PrintWriter writer, String query, String info) {
+    private void doSortQuery(PrintWriter printWriter, String query, String header) {
         List<Map<String, String>> result = database.getNamesAndPrices(query);
-
-        writer.println("<html><body>");
-        writer.println(info);
-        for (Map<String, String> pairs : result) {
-            String name = pairs.get("name");
-            String price  = pairs.get("price");
-            writer.println(name + "\t" + price + "</br>");
+        try (HTMLWriter writer = new HTMLWriter(printWriter)) {
+            writer.addHeader1(header);
+            for (Map<String, String> pairs : result) {
+                String name = pairs.get("name");
+                String price = pairs.get("price");
+                writer.addParagraph(name + "\t" + price);
+            }
         }
-        writer.println("</body></html>");
     }
 
     private void sum(PrintWriter writer) {
@@ -99,15 +99,14 @@ public class QueryServlet extends HttpServlet {
         doScalarQuery(writer, query, info);
     }
 
-    private void doScalarQuery(PrintWriter writer, String query, String info) {
+    private void doScalarQuery(PrintWriter printWriter, String query, String info) {
         int result = database.getScalarNumber(query, EMPTY);
-
-        writer.println("<html><body>");
-        writer.println(info);
-        if (result != EMPTY) {
-            writer.println(result);
+        try (HTMLWriter writer = new HTMLWriter(printWriter)) {
+            writer.addLine(info);
+            if (result != EMPTY) {
+                writer.addLine(String.valueOf(result));
+            }
         }
-        writer.println("</body></html>");
     }
 
 }
