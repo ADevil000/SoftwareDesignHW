@@ -2,6 +2,7 @@ package org.example.statistic;
 
 import org.example.clock.Clock;
 
+import java.io.PrintStream;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -10,10 +11,22 @@ import java.util.stream.Collectors;
 
 public class SimpleStatistic implements EventsStatistic {
     private Clock clock;
-    Map<String, LinkedList<Instant>> eventsToTime = new HashMap<>();
+
+    private Map<String, LinkedList<Instant>> eventsToTime = new HashMap<>();
+
+    private final PrintStream output;
+
+    public Map<String, LinkedList<Instant>> getEventsToTime() {
+        return eventsToTime;
+    }
 
     public SimpleStatistic(Clock clock) {
+        this(clock, System.out);
+    }
+
+    public SimpleStatistic(Clock clock, PrintStream stream) {
         this.clock = clock;
+        this.output = stream;
     }
 
     @Override
@@ -81,7 +94,7 @@ public class SimpleStatistic implements EventsStatistic {
     @Override
     public void printStatistic() {
         allEventsAction((name, statistic) -> {
-            System.out.println(name + " " + statistic);
+            output.println(name + " " + statistic);
             return null;
         });
     }
